@@ -2,10 +2,9 @@
 
 namespace App\Controllers;
 
-use App\Core\BaseController;
 use App\Models\Matakuliah;
 
-class MatakuliahController extends BaseController
+class MatakuliahController
 {
     private Matakuliah $model;
 
@@ -13,74 +12,40 @@ class MatakuliahController extends BaseController
 
     public function index(): void
     {
-        $items = $this->model->all(); $title = 'Mata Kuliah | SI Akademik';
-        $this->view('matakuliah/index', compact('items', 'title'));
+        $items = $this->model->all(); $title = 'Mata Kuliah | SI Akademik'; $content = __DIR__ . '/../Views/matakuliah/index.php';
+        require __DIR__ . '/../Views/layouts/main.php';
     }
 
     public function create(): void
     {
-        $prodi = $this->model->prodiAll(); $title = 'Tambah Mata Kuliah | SI Akademik';
-        $this->view('matakuliah/form', compact('prodi', 'title'));
+        $prodi = $this->model->prodiAll(); $title = 'Tambah Mata Kuliah | SI Akademik'; $content = __DIR__ . '/../Views/matakuliah/form.php';
+        require __DIR__ . '/../Views/layouts/main.php';
     }
 
     public function edit(int $id): void
     {
         $item = $this->model->find($id); if ($item === null) { http_response_code(404); echo '404 - Mata kuliah tidak ditemukan'; return; }
-        $prodi = $this->model->prodiAll(); $title = 'Edit Mata Kuliah | SI Akademik';
-        $this->view('matakuliah/form', compact('item', 'prodi', 'title'));
+        $prodi = $this->model->prodiAll(); $title = 'Edit Mata Kuliah | SI Akademik'; $content = __DIR__ . '/../Views/matakuliah/form.php';
+        require __DIR__ . '/../Views/layouts/main.php';
     }
 
     public function store(): void
     {
         $data = $this->data();
-        if ($data === null) {
-            http_response_code(422);
-            $error = 'Kode, nama, SKS, dan program studi wajib diisi.';
-            $prodi = $this->model->prodiAll();
-            $title = 'Tambah Mata Kuliah | SI Akademik';
-            $this->view('matakuliah/form', compact('error', 'prodi', 'title'));
-            return;
-        }
-        try {
-            $this->model->create($data);
-        } catch (\InvalidArgumentException $exception) {
-            http_response_code(422);
-            $error = $exception->getMessage();
-            $prodi = $this->model->prodiAll();
-            $title = 'Tambah Mata Kuliah | SI Akademik';
-            $this->view('matakuliah/form', compact('error', 'prodi', 'title'));
-            return;
-        }
-        $_SESSION['flash'] = 'Mata kuliah berhasil ditambahkan.'; $this->redirect(BASE_URL . '/matakuliah');
+        if ($data === null) { http_response_code(422); $error = 'Kode, nama, SKS, dan program studi wajib diisi.'; $item = $_POST; $prodi = $this->model->prodiAll(); $title = 'Tambah Mata Kuliah | SI Akademik'; $content = __DIR__ . '/../Views/matakuliah/form.php'; require __DIR__ . '/../Views/layouts/main.php'; return; }
+        if (!$this->model->create($data)) { http_response_code(422); $error = 'Nama mata kuliah tersebut sudah terdaftar.'; $item = $data; $prodi = $this->model->prodiAll(); $title = 'Tambah Mata Kuliah | SI Akademik'; $content = __DIR__ . '/../Views/matakuliah/form.php'; require __DIR__ . '/../Views/layouts/main.php'; return; }
+        $_SESSION['flash'] = 'Mata kuliah berhasil ditambahkan.'; header('Location: ' . BASE_URL . '/matakuliah'); exit;
     }
 
     public function update(int $id): void
     {
-        $data = $this->data();
-        if ($data === null) {
-            http_response_code(422);
-            $error = 'Kode, nama, SKS, dan program studi wajib diisi.';
-            $item = $this->model->find($id);
-            $prodi = $this->model->prodiAll();
-            $title = 'Edit Mata Kuliah | SI Akademik';
-            $this->view('matakuliah/form', compact('error', 'item', 'prodi', 'title'));
-            return;
-        }
-        try {
-            $this->model->update($id, $data);
-        } catch (\InvalidArgumentException $exception) {
-            http_response_code(422);
-            $error = $exception->getMessage();
-            $item = $this->model->find($id);
-            $prodi = $this->model->prodiAll();
-            $title = 'Edit Mata Kuliah | SI Akademik';
-            $this->view('matakuliah/form', compact('error', 'item', 'prodi', 'title'));
-            return;
-        }
-        $_SESSION['flash'] = 'Mata kuliah berhasil diperbarui.'; $this->redirect(BASE_URL . '/matakuliah');
+        $item = $this->model->find($id); if ($item === null) { http_response_code(404); echo '404 - Mata kuliah tidak ditemukan'; return; }
+        $data = $this->data(); if ($data === null) { http_response_code(422); $error = 'Kode, nama, SKS, dan program studi wajib diisi.'; $item = [...$item, ...$_POST]; $prodi = $this->model->prodiAll(); $title = 'Edit Mata Kuliah | SI Akademik'; $content = __DIR__ . '/../Views/matakuliah/form.php'; require __DIR__ . '/../Views/layouts/main.php'; return; }
+        if (!$this->model->update($id, $data)) { http_response_code(422); $error = 'Nama mata kuliah tersebut sudah digunakan oleh mata kuliah lain.'; $item = [...$item, ...$data]; $prodi = $this->model->prodiAll(); $title = 'Edit Mata Kuliah | SI Akademik'; $content = __DIR__ . '/../Views/matakuliah/form.php'; require __DIR__ . '/../Views/layouts/main.php'; return; }
+        $_SESSION['flash'] = 'Mata kuliah berhasil diperbarui.'; header('Location: ' . BASE_URL . '/matakuliah'); exit;
     }
 
-    public function destroy(int $id): void { $this->model->delete($id); $_SESSION['flash'] = 'Mata kuliah berhasil dihapus.'; $this->redirect(BASE_URL . '/matakuliah'); }
+    public function destroy(int $id): void { $this->model->delete($id); $_SESSION['flash'] = 'Mata kuliah berhasil dihapus.'; header('Location: ' . BASE_URL . '/matakuliah'); exit; }
 
     private function data(): ?array
     {

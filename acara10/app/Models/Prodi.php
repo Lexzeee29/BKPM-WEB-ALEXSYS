@@ -18,40 +18,42 @@ class Prodi extends BaseModel
         return ($item = $statement->fetch()) ?: null;
     }
 
-    public function create(array $data): void
+    public function namaExists(string $nama, ?int $exceptId = null): bool
     {
-        if ($this->nameExists($data['nama'])) {
-            throw new \InvalidArgumentException('Nama program studi tersebut sudah terdaftar.');
+        $sql = 'SELECT 1 FROM prodi WHERE nama = :nama';
+        $params = ['nama' => $nama];
+
+        if ($exceptId !== null) {
+            $sql .= ' AND id != :id';
+            $params['id'] = $exceptId;
+        }
+
+        $statement = $this->db->prepare($sql . ' LIMIT 1');
+        $statement->execute($params);
+        return $statement->fetchColumn() !== false;
+    }
+
+    public function create(array $data): bool
+    {
+        if ($this->namaExists($data['nama'])) {
+            return false;
         }
 
         $statement = $this->db->prepare('INSERT INTO prodi (kode, nama) VALUES (:kode, :nama)');
         $statement->execute($data);
+        return true;
     }
 
-    public function update(int $id, array $data): void
+    public function update(int $id, array $data): bool
     {
-        if ($this->nameExists($data['nama'], $id)) {
-            throw new \InvalidArgumentException('Nama program studi tersebut sudah digunakan program studi lain.');
+        if ($this->namaExists($data['nama'], $id)) {
+            return false;
         }
 
         $data['id'] = $id;
         $statement = $this->db->prepare('UPDATE prodi SET kode = :kode, nama = :nama WHERE id = :id');
         $statement->execute($data);
-    }
-
-    private function nameExists(string $name, ?int $excludeId = null): bool
-    {
-        $sql = 'SELECT 1 FROM prodi WHERE nama = :nama';
-        $parameters = ['nama' => $name];
-        if ($excludeId !== null) {
-            $sql .= ' AND id <> :exclude_id';
-            $parameters['exclude_id'] = $excludeId;
-        }
-
-        $statement = $this->db->prepare($sql);
-        $statement->execute($parameters);
-
-        return $statement->fetchColumn() !== false;
+        return true;
     }
 
     public function delete(int $id): void

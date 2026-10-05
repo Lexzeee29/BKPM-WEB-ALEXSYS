@@ -2,19 +2,19 @@
 
 namespace App\Controllers;
 
-use App\Core\BaseController;
-
-class AuthController extends BaseController
+class AuthController
 {
     public function loginForm(): void
     {
         if (!empty($_SESSION['logged_in'])) {
-            $this->redirect(BASE_URL . '/dashboard');
+            header('Location: ' . BASE_URL . '/dashboard');
+            exit;
         }
 
         $flash = $this->getFlash();
         $title = 'Login | SI Akademik';
-        $this->view('auth/login', compact('flash', 'title'));
+        $content = __DIR__ . '/../Views/auth/login.php';
+        require __DIR__ . '/../Views/layouts/main.php';
     }
 
     public function login(): void
@@ -28,12 +28,14 @@ class AuthController extends BaseController
             $_SESSION['logged_in'] = true;
             $_SESSION['flash'] = 'Selamat datang, Admin';
 
-            $this->redirect(BASE_URL . '/dashboard');
+            header('Location: ' . BASE_URL . '/dashboard');
+            exit;
         }
 
         $error = 'Username atau password salah.';
         $title = 'Login | SI Akademik';
-        $this->view('auth/login', compact('error', 'title'));
+        $content = __DIR__ . '/../Views/auth/login.php';
+        require __DIR__ . '/../Views/layouts/main.php';
     }
 
     public function logout(): void
@@ -43,7 +45,8 @@ class AuthController extends BaseController
         session_start();
         $_SESSION['flash'] = 'Anda telah logout.';
 
-        $this->redirect(BASE_URL . '/login');
+        header('Location: ' . BASE_URL . '/login');
+        exit;
     }
 
     private function getFlash(): ?string

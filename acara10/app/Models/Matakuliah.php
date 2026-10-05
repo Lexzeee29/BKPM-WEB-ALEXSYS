@@ -27,40 +27,42 @@ class Matakuliah extends BaseModel
         return $this->db->query('SELECT id, kode, nama FROM prodi ORDER BY nama ASC')->fetchAll();
     }
 
-    public function create(array $data): void
+    public function namaExists(string $nama, ?int $exceptId = null): bool
     {
-        if ($this->nameExists($data['nama'])) {
-            throw new \InvalidArgumentException('Nama mata kuliah tersebut sudah terdaftar.');
+        $sql = 'SELECT 1 FROM matakuliah WHERE nama = :nama';
+        $params = ['nama' => $nama];
+
+        if ($exceptId !== null) {
+            $sql .= ' AND id != :id';
+            $params['id'] = $exceptId;
+        }
+
+        $statement = $this->db->prepare($sql . ' LIMIT 1');
+        $statement->execute($params);
+        return $statement->fetchColumn() !== false;
+    }
+
+    public function create(array $data): bool
+    {
+        if ($this->namaExists($data['nama'])) {
+            return false;
         }
 
         $statement = $this->db->prepare('INSERT INTO matakuliah (kode, nama, sks, prodi_id) VALUES (:kode, :nama, :sks, :prodi_id)');
         $statement->execute($data);
+        return true;
     }
 
-    public function update(int $id, array $data): void
+    public function update(int $id, array $data): bool
     {
-        if ($this->nameExists($data['nama'], $id)) {
-            throw new \InvalidArgumentException('Nama mata kuliah tersebut sudah digunakan mata kuliah lain.');
+        if ($this->namaExists($data['nama'], $id)) {
+            return false;
         }
 
         $data['id'] = $id;
         $statement = $this->db->prepare('UPDATE matakuliah SET kode = :kode, nama = :nama, sks = :sks, prodi_id = :prodi_id WHERE id = :id');
         $statement->execute($data);
-    }
-
-    private function nameExists(string $name, ?int $excludeId = null): bool
-    {
-        $sql = 'SELECT 1 FROM matakuliah WHERE nama = :nama';
-        $parameters = ['nama' => $name];
-        if ($excludeId !== null) {
-            $sql .= ' AND id <> :exclude_id';
-            $parameters['exclude_id'] = $excludeId;
-        }
-
-        $statement = $this->db->prepare($sql);
-        $statement->execute($parameters);
-
-        return $statement->fetchColumn() !== false;
+        return true;
     }
 
     public function delete(int $id): void
