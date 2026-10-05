@@ -1,0 +1,56 @@
+<?php $items = $items ?? []; ?>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+	<div>
+		<p class="text-primary fw-semibold mb-1">DATA AKADEMIK</p>
+		<h1 class="h2 mb-1">Mata Kuliah</h1>
+	</div>
+	<a href="<?= BASE_URL ?>/matakuliah/create" class="btn btn-primary">
+		+ Tambah Mata Kuliah
+	</a>
+</div>
+
+<section class="card border-0 shadow-sm">
+	<div class="table-responsive">
+		<table class="table table-hover align-middle mb-0">
+			<thead class="table-dark">
+				<tr>
+					<th class="px-4">Kode</th>
+					<th>Nama</th>
+					<th>SKS</th>
+					<th>Program Studi</th>
+					<th class="text-end px-4">Aksi</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php if ($items === []): ?>
+					<tr>
+						<td colspan="5" class="text-center text-secondary py-4">
+							Belum ada data mata kuliah.
+						</td>
+					</tr>
+				<?php else: ?>
+					<?php foreach ($items as $item): ?>
+						<tr>
+							<td class="px-4"><?= htmlspecialchars($item['kode'], ENT_QUOTES, 'UTF-8') ?></td>
+							<td><?= htmlspecialchars($item['nama'], ENT_QUOTES, 'UTF-8') ?></td>
+							<td><?= $item['sks'] ?></td>
+							<td><?= htmlspecialchars($item['prodi_nama'], ENT_QUOTES, 'UTF-8') ?></td>
+							<td class="text-end px-4">
+								<a href="<?= BASE_URL ?>/matakuliah/<?= $item['id'] ?>/edit" class="btn btn-sm btn-outline-secondary">Edit</a>
+								<form
+									action="<?= BASE_URL ?>/matakuliah/<?= $item['id'] ?>/delete"
+									method="post"
+									class="d-inline"
+									onsubmit="return confirm('Hapus mata kuliah ini?')"
+								>
+									<button class="btn btn-sm btn-outline-danger">Hapus</button>
+								</form>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+				<?php endif; ?>
+			</tbody>
+		</table>
+	</div>
+</section>
