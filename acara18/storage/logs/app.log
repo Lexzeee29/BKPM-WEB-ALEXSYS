@@ -1,0 +1,6 @@
+[2026-10-20T05:43:27+00:00] PDOException: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it in C:\laragon\www\BKPM-WEB-ALEXX\acara16\app\Core\Database.php:32
+#0 C:\laragon\www\BKPM-WEB-ALEXX\acara16\app\Core\Database.php(32): PDO->__construct('mysql:host=loca...', 'root', '', Array)
+#1 C:\laragon\www\BKPM-WEB-ALEXX\acara16\app\Core\Database.php(46): App\Core\Database->__construct()
+#2 C:\laragon\www\BKPM-WEB-ALEXX\acara16\app\Core\Database.php(62): App\Core\Database::getInstance()
+#3 Standard input code(6): App\Core\Database::connection()
+#4 {main}

@@ -58,7 +58,7 @@ class MahasiswaService
                 $this->setFlash('NIM sudah terdaftar.', 'danger');
 
                 return false;
-            }
+            }x
 
             $created = $this->mahasiswaRepository->create($data);
         } catch (Throwable $exception) {

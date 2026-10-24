@@ -1,0 +1,245 @@
+{
+  "info": {
+    "_postman_id": "f53a05a0-3d31-4b29-8f40-4cc641b83aa3",
+    "name": "RESTful API Mahasiswa",
+    "description": "Pengujian GET /api/mahasiswa, GET /api/mahasiswa/{id}, POST, PUT, DELETE, dan validasi error. Ubah base_url sesuai alamat aplikasi lokal. Request JSON wajib menyertakan nim, nama, dan email; prodi_id serta angkatan opsional (POST memakai prodi pertama dan tahun berjalan sebagai default). Status: 200 berhasil, 201 dibuat, 400 input tidak valid, 404 tidak ditemukan, 409 NIM duplikat, 415 Content-Type tidak sesuai, 500 kesalahan server.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost/BKPM-WEB-ALEXX/acara16"
+    },
+    {
+      "key": "mahasiswa_id",
+      "value": "1"
+    },
+    {
+      "key": "nim_uji",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "GET - Semua mahasiswa",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/mahasiswa",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "mahasiswa"
+          ]
+        }
+      }
+    },
+    {
+      "name": "GET - Mahasiswa berdasarkan ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/mahasiswa/{{mahasiswa_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "mahasiswa",
+            "{{mahasiswa_id}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "POST - Tambah mahasiswa",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set('nim_uji', '26' + Date.now().toString().slice(-8));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status 201 Created', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "if (pm.response.code === 201) {",
+              "    pm.collectionVariables.set('mahasiswa_id', pm.response.json().data.id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nim\": \"{{nim_uji}}\",\n  \"nama\": \"Dewi\",\n  \"email\": \"dewi@example.com\",\n  \"prodi_id\": 1,\n  \"angkatan\": 2026\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/mahasiswa",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "mahasiswa"
+          ]
+        }
+      }
+    },
+    {
+      "name": "PUT - Ubah mahasiswa",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nim\": \"{{nim_uji}}\",\n  \"nama\": \"Dewi Lestari\",\n  \"email\": \"dewi.lestari@example.com\",\n  \"prodi_id\": 1,\n  \"angkatan\": 2026\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/mahasiswa/{{mahasiswa_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "mahasiswa",
+            "{{mahasiswa_id}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "DELETE - Hapus mahasiswa",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/mahasiswa/{{mahasiswa_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "mahasiswa",
+            "{{mahasiswa_id}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "GET - ID tidak ditemukan (404)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/mahasiswa/99999999",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "mahasiswa",
+            "99999999"
+          ]
+        }
+      }
+    },
+    {
+      "name": "POST - Data tidak lengkap (400)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nim\": \"\",\n  \"nama\": \"\",\n  \"email\": \"\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/mahasiswa",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "mahasiswa"
+          ]
+        }
+      }
+    },
+    {
+      "name": "POST - Email tidak valid (400)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nim\": \"26001002\",\n  \"nama\": \"Rina\",\n  \"email\": \"email-tidak-valid\",\n  \"prodi_id\": 1,\n  \"angkatan\": 2026\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/mahasiswa",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "mahasiswa"
+          ]
+        }
+      }
+    }
+  ]
+}
