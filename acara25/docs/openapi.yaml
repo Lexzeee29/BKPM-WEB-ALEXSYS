@@ -1,0 +1,584 @@
+openapi: 3.0.0
+info:
+  title: API Sistem Informasi Akademik
+  description: >-
+    Dokumentasi REST API untuk autentikasi pengguna, data mahasiswa, dan data buku.
+    Operasi CRUD mahasiswa selain pembacaan memerlukan Bearer token.
+  version: 1.0.0
+servers:
+  - url: http://localhost/BKPM-WEB-ALEXX/acara22/public
+    description: Server pengembangan lokal
+tags:
+  - name: Autentikasi
+  - name: Mahasiswa
+  - name: Buku
+paths:
+  /api/register:
+    post:
+      tags: [Autentikasi]
+      summary: Mendaftarkan pengguna baru
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+            example:
+              username: admin
+              email: admin@example.com
+              password: rahasia123
+      responses:
+        '201':
+          description: Registrasi berhasil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '409':
+          description: Username atau email sudah terdaftar
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '422':
+          description: Field wajib kosong atau format email tidak valid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Registrasi gagal karena kesalahan penyimpanan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /api/login:
+    post:
+      tags: [Autentikasi]
+      summary: Login dan memperoleh token Bearer
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              username: admin
+              password: rahasia123
+      responses:
+        '200':
+          description: Login berhasil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          description: JSON tidak valid atau body bukan object JSON
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Username atau password salah
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '415':
+          description: Content-Type bukan application/json
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '422':
+          description: Username atau password kosong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /api/mahasiswa:
+    get:
+      tags: [Mahasiswa]
+      summary: Mengambil seluruh data mahasiswa
+      operationId: listMahasiswa
+      responses:
+        '200':
+          description: Data mahasiswa berhasil diambil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahasiswaListResponse'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    post:
+      tags: [Mahasiswa]
+      summary: Menambahkan data mahasiswa
+      operationId: createMahasiswa
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MahasiswaRequest'
+            example:
+              nim: '241250599'
+              nama: Dewi Lestari
+              email: dewi@example.com
+              prodi_id: 2
+              angkatan: 2024
+      responses:
+        '201':
+          description: Data mahasiswa berhasil ditambahkan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahasiswaResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: NIM sudah terdaftar
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahasiswaResponse'
+        '415':
+          description: Content-Type bukan application/json
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahasiswaResponse'
+        '422':
+          description: Format NIM tidak valid atau data program studi belum tersedia
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahasiswaResponse'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /api/mahasiswa/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Mahasiswa]
+      summary: Mengambil detail mahasiswa
+      operationId: getMahasiswa
+      responses:
+        '200':
+          description: Data mahasiswa berhasil diambil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahasiswaResponse'
+        '404':
+          description: Data mahasiswa tidak ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahasiswaResponse'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    put:
+      tags: [Mahasiswa]
+      summary: Memperbarui data mahasiswa
+      operationId: updateMahasiswa
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MahasiswaRequest'
+            example:
+              nim: '241250599'
+              nama: Dewi Lestari Putri
+              email: dewi.putri@example.com
+              prodi_id: 2
+              angkatan: 2024
+      responses:
+        '200':
+          description: Data mahasiswa berhasil diubah
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahasiswaResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Data mahasiswa tidak ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahasiswaResponse'
+        '409':
+          description: NIM sudah terdaftar
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahasiswaResponse'
+        '415':
+          description: Content-Type bukan application/json
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahasiswaResponse'
+        '422':
+          description: Format NIM tidak valid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahasiswaResponse'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    delete:
+      tags: [Mahasiswa]
+      summary: Menghapus data mahasiswa
+      operationId: deleteMahasiswa
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Data mahasiswa berhasil dihapus
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahasiswaResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Data mahasiswa tidak ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahasiswaResponse'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /api/buku:
+    get:
+      tags: [Buku]
+      summary: Mengambil seluruh data buku
+      operationId: listBuku
+      responses:
+        '200':
+          description: Data buku berhasil diambil
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Buku'
+    post:
+      tags: [Buku]
+      summary: Menambahkan data buku
+      operationId: createBuku
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BukuRequest'
+      responses:
+        '201':
+          description: Data buku berhasil ditambahkan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BukuResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '415':
+          description: Content-Type bukan application/json
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /api/buku/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Buku]
+      summary: Mengambil detail buku
+      operationId: getBuku
+      responses:
+        '200':
+          description: Data buku berhasil diambil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BukuResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags: [Buku]
+      summary: Memperbarui data buku
+      operationId: updateBuku
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BukuRequest'
+      responses:
+        '200':
+          description: Data buku berhasil diperbarui
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BukuResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '415':
+          description: Content-Type bukan application/json
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    delete:
+      tags: [Buku]
+      summary: Menghapus data buku
+      operationId: deleteBuku
+      responses:
+        '200':
+          description: Data buku berhasil dihapus
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BukuResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      description: ID data berupa bilangan bulat positif
+      schema:
+        type: integer
+        minimum: 1
+  responses:
+    BadRequest:
+      description: Request tidak valid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+    NotFound:
+      description: Data tidak ditemukan
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+    ServerError:
+      description: Kesalahan pada server
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MahasiswaResponse'
+    Unauthorized:
+      description: Token tidak ditemukan, tidak valid, atau kedaluwarsa
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+        errors:
+          oneOf:
+            - type: array
+              items: {}
+            - type: object
+              additionalProperties: true
+        timestamp:
+          type: string
+          format: date-time
+      required: [success, message, data, errors, timestamp]
+    MahasiswaResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: object
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/Mahasiswa'
+      required: [success, message, data]
+    MahasiswaListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Mahasiswa'
+      required: [success, message, data]
+    BukuResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: object
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/Buku'
+      required: [success, message, data]
+    RegisterRequest:
+      type: object
+      required: [username, email, password]
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+    LoginRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+    LoginResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Login berhasil
+        data:
+          type: object
+          properties:
+            token:
+              type: string
+              description: Token Bearer berlaku selama 5 menit
+            role:
+              type: string
+        errors:
+          type: array
+          items: {}
+        timestamp:
+          type: string
+          format: date-time
+      required: [success, message, data, errors, timestamp]
+    Mahasiswa:
+      type: object
+      properties:
+        id:
+          type: integer
+        nim:
+          type: string
+          pattern: '^\d{9}$'
+        nama:
+          type: string
+          maxLength: 100
+        email:
+          type: string
+          format: email
+        prodi_id:
+          type: integer
+        angkatan:
+          type: integer
+          minimum: 2000
+          maximum: 2155
+        status:
+          type: string
+      required: [id, nim, nama, email, prodi_id, angkatan, status]
+    MahasiswaRequest:
+      type: object
+      required: [nim, nama, email]
+      properties:
+        nim:
+          type: string
+          pattern: '^\d{9}$'
+        nama:
+          type: string
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          maxLength: 100
+        prodi_id:
+          type: integer
+          minimum: 1
+          description: Opsional saat membuat mahasiswa; default ke ID prodi terkecil.
+        angkatan:
+          type: integer
+          minimum: 2000
+          maximum: 2155
+          description: Opsional; default tahun berjalan saat membuat mahasiswa.
+    Buku:
+      type: object
+      properties:
+        id:
+          type: integer
+        judul:
+          type: string
+        penulis:
+          type: string
+        penerbit:
+          type: string
+        tahun_terbit:
+          type: integer
+        created_at:
+          type: string
+      required: [id, judul, penulis, penerbit, tahun_terbit]
+    BukuRequest:
+      type: object
+      required: [judul, penulis, penerbit, tahun_terbit]
+      properties:
+        judul:
+          type: string
+          maxLength: 150
+        penulis:
+          type: string
+          maxLength: 100
+        penerbit:
+          type: string
+          maxLength: 100
+        tahun_terbit:
+          type: integer
+          minimum: 1000
+          maximum: 65535
