@@ -78,11 +78,25 @@
   studentForm.elements.namedItem('foto').addEventListener('change', (event) => {
     const file = event.target.files[0];
     const photoPreview = dashboard.querySelector('#student-photo-preview');
+    formMessage.textContent = '';
 
-    if (file) {
-      photoPreview.src = URL.createObjectURL(file);
-      photoPreview.hidden = false;
+    if (!file) {
+      return;
     }
+
+    const allowedTypes = ['image/jpeg', 'image/png'];
+    if (!allowedTypes.includes(file.type) || file.size > 2 * 1024 * 1024) {
+      event.target.value = '';
+      photoPreview.removeAttribute('src');
+      photoPreview.hidden = true;
+      formMessage.textContent = !allowedTypes.includes(file.type)
+        ? 'Pilih foto berformat JPG atau PNG.'
+        : 'Ukuran foto maksimal 2MB.';
+      return;
+    }
+
+    photoPreview.src = URL.createObjectURL(file);
+    photoPreview.hidden = false;
   });
 
   const showRows = () => {
@@ -105,7 +119,7 @@
       row.append(cell);
       tableBody.append(row);
       message.textContent = students.length === 0
-        ? 'Belum ada data mahasiswa.'
+        ? 'Belum ada data'
         : 'Tidak ada mahasiswa yang cocok dengan pencarian.';
       return;
     }

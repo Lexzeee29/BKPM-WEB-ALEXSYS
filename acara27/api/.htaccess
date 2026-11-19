@@ -1,0 +1,2 @@
+RewriteEngine On
+RewriteRule ^mahasiswa(?:/.*)?$ mahasiswa.php [QSA,L]
