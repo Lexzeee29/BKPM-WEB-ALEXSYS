@@ -1,0 +1,48 @@
+[2026-10-20T05:43:27+00:00] PDOException: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it in C:\laragon\www\BKPM-WEB-ALEXX\acara16\app\Core\Database.php:32
+#0 C:\laragon\www\BKPM-WEB-ALEXX\acara16\app\Core\Database.php(32): PDO->__construct('mysql:host=loca...', 'root', '', Array)
+#1 C:\laragon\www\BKPM-WEB-ALEXX\acara16\app\Core\Database.php(46): App\Core\Database->__construct()
+#2 C:\laragon\www\BKPM-WEB-ALEXX\acara16\app\Core\Database.php(62): App\Core\Database::getInstance()
+#3 Standard input code(6): App\Core\Database::connection()
+#4 {main}
+[2026-10-26T10:44:02+00:00] RuntimeException: JWT_SECRET must be configured with at least 32 characters. in C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Core\Auth.php:46
+#0 C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Core\Auth.php(68): App\Core\Auth::secret()
+#1 C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Controllers\AuthController.php(99): App\Core\Auth::generateToken(Array)
+#2 C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Core\Router.php(44): App\Controllers\AuthController->loginApi()
+#3 C:\laragon\www\BKPM-WEB-ALEXX\acara20\public\index.php(106): App\Core\Router->dispatch('/api/login')
+#4 {main}
+[2026-10-26T10:44:03+00:00] RuntimeException: JWT_SECRET must be configured with at least 32 characters. in C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Core\Auth.php:46
+#0 C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Core\Auth.php(68): App\Core\Auth::secret()
+#1 C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Controllers\AuthController.php(99): App\Core\Auth::generateToken(Array)
+#2 C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Core\Router.php(44): App\Controllers\AuthController->loginApi()
+#3 C:\laragon\www\BKPM-WEB-ALEXX\acara20\public\index.php(106): App\Core\Router->dispatch('/api/login')
+#4 {main}
+[2026-10-26T10:44:04+00:00] RuntimeException: JWT_SECRET must be configured with at least 32 characters. in C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Core\Auth.php:46
+#0 C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Core\Auth.php(68): App\Core\Auth::secret()
+#1 C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Controllers\AuthController.php(99): App\Core\Auth::generateToken(Array)
+#2 C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Core\Router.php(44): App\Controllers\AuthController->loginApi()
+#3 C:\laragon\www\BKPM-WEB-ALEXX\acara20\public\index.php(106): App\Core\Router->dispatch('/api/login')
+#4 {main}
+[2026-10-26T10:44:04+00:00] RuntimeException: JWT_SECRET must be configured with at least 32 characters. in C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Core\Auth.php:46
+#0 C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Core\Auth.php(68): App\Core\Auth::secret()
+#1 C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Controllers\AuthController.php(99): App\Core\Auth::generateToken(Array)
+#2 C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Core\Router.php(44): App\Controllers\AuthController->loginApi()
+#3 C:\laragon\www\BKPM-WEB-ALEXX\acara20\public\index.php(106): App\Core\Router->dispatch('/api/login')
+#4 {main}
+[2026-10-26T10:46:36+00:00] RuntimeException: JWT_SECRET must be configured with at least 32 characters. in C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Core\Auth.php:46
+#0 C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Core\Auth.php(68): App\Core\Auth::secret()
+#1 C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Controllers\AuthController.php(99): App\Core\Auth::generateToken(Array)
+#2 C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Core\Router.php(44): App\Controllers\AuthController->loginApi()
+#3 C:\laragon\www\BKPM-WEB-ALEXX\acara20\public\index.php(106): App\Core\Router->dispatch('/api/login')
+#4 {main}
+[2026-10-26T10:46:36+00:00] RuntimeException: JWT_SECRET must be configured with at least 32 characters. in C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Core\Auth.php:46
+#0 C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Core\Auth.php(68): App\Core\Auth::secret()
+#1 C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Controllers\AuthController.php(99): App\Core\Auth::generateToken(Array)
+#2 C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Core\Router.php(44): App\Controllers\AuthController->loginApi()
+#3 C:\laragon\www\BKPM-WEB-ALEXX\acara20\public\index.php(106): App\Core\Router->dispatch('/api/login')
+#4 {main}
+[2026-10-26T10:46:37+00:00] RuntimeException: JWT_SECRET must be configured with at least 32 characters. in C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Core\Auth.php:46
+#0 C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Core\Auth.php(68): App\Core\Auth::secret()
+#1 C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Controllers\AuthController.php(99): App\Core\Auth::generateToken(Array)
+#2 C:\laragon\www\BKPM-WEB-ALEXX\acara20\app\Core\Router.php(44): App\Controllers\AuthController->loginApi()
+#3 C:\laragon\www\BKPM-WEB-ALEXX\acara20\public\index.php(106): App\Core\Router->dispatch('/api/login')
+#4 {main}
