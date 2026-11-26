@@ -1,14 +1,14 @@
 {
   "info": {
     "_postman_id": "f53a05a0-3d31-4b29-8f40-4cc641b83aa3",
-    "name": "SI Akademik acara27 - API dan RBAC",
-    "description": "Collection API untuk instalasi acara27. GET mahasiswa bersifat publik; POST/PUT/DELETE memerlukan Bearer token dengan role admin. Registrasi publik selalu membuat role user.",
+    "name": "SI Akademik - API Produksi",
+    "description": "Collection API produksi SI Akademik. Base URL memakai environment SI Akademik Production. GET mahasiswa dan endpoint buku dapat diakses tanpa token; POST/PUT/DELETE mahasiswa memerlukan token Bearer role admin. Registrasi publik membuat role user. Gunakan hanya data uji yang aman; request hapus bersifat permanen.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     {
       "key": "base_url",
-      "value": "http://localhost/BKPM-WEB-ALEXX/acara27/public"
+      "value": "https://alwiyaa.my.id/Alex/public"
     },
     {
       "key": "mahasiswa_id",
@@ -37,12 +37,36 @@
     {
       "key": "role",
       "value": ""
+    },
+    {
+      "key": "buku_id",
+      "value": ""
+    },
+    {
+      "key": "judul_uji",
+      "value": "Buku Uji API SI Akademik"
+    },
+    {
+      "key": "judul_update",
+      "value": "Buku Uji API SI Akademik - Diperbarui"
+    },
+    {
+      "key": "penulis_uji",
+      "value": "Penulis Uji"
+    },
+    {
+      "key": "penerbit_uji",
+      "value": "Penerbit Uji"
+    },
+    {
+      "key": "tahun_uji",
+      "value": "2026"
     }
   ],
   "item": [
     {
       "name": "POST - Register pengguna (opsional)",
-      "description": "Handler: AuthController::register(). Mendaftarkan pengguna baru. Body JSON: username, email, password. Jalankan bila belum memiliki akun; isi collection variables terlebih dahulu.",
+      "description": "Mendaftarkan pengguna baru melalui AuthController::register(). Isi username, email, dan password pada environment. Registrasi publik membuat role user (bukan admin), sehingga untuk menguji operasi tulis mahasiswa gunakan akun admin yang sudah disiapkan.",
       "request": {
         "method": "POST",
         "header": [
@@ -1444,6 +1468,218 @@
               ]
             }
           }
+        }
+      ]
+    },
+    {
+      "name": "API Buku - CRUD (data uji)",
+      "description": "Endpoint buku tidak memerlukan autentikasi. Jalankan berurutan untuk mencoba CRUD dengan record uji. DELETE menghapus permanen record pada hosting; gunakan hanya record uji yang dibuat sendiri.",
+      "item": [
+        {
+          "name": "GET - Semua buku",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/buku",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "buku"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Daftar buku berhasil dimuat', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Response berisi array data', function () { pm.expect(pm.response.json().data).to.be.an('array'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Tambah buku uji",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"judul\": \"{{judul_uji}}\",\n  \"penulis\": \"{{penulis_uji}}\",\n  \"penerbit\": \"{{penerbit_uji}}\",\n  \"tahun_terbit\": \"{{tahun_uji}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/buku",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "buku"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Buku uji berhasil dibuat', function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "    const body = pm.response.json();",
+                  "    if (body.success && body.data && body.data.id) pm.environment.set('buku_id', String(body.data.id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Buku berdasarkan ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/buku/{{buku_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "buku",
+                "{{buku_id}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Detail buku berhasil dimuat', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - Ubah buku uji",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"judul\": \"{{judul_update}}\",\n  \"penulis\": \"{{penulis_uji}}\",\n  \"penerbit\": \"{{penerbit_uji}}\",\n  \"tahun_terbit\": \"{{tahun_uji}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/buku/{{buku_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "buku",
+                "{{buku_id}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Buku uji berhasil diperbarui', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - Hapus buku uji (permanen)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/buku/{{buku_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "buku",
+                "{{buku_id}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Buku uji berhasil dihapus', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code === 200) pm.environment.set('buku_id', '');"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - ID buku tidak ditemukan (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/buku/99999999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "buku",
+                "99999999"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('ID buku tidak ditemukan', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
         }
       ]
     }

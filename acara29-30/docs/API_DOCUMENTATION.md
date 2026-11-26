@@ -407,13 +407,15 @@ Route web tidak identik dengan API JSON: operasi web mengarahkan ulang ke halama
 
 ## Pengujian dan Dokumentasi dengan Postman
 
-Collection request tersedia di [`api/postman_collection.json`](../api/postman_collection.json), sedangkan environment lokal siap impor tersedia di [`api/SI-Akademik-Local.postman_environment.json`](../api/SI-Akademik-Local.postman_environment.json).
+Collection request tersedia di [`api/postman_collection.json`](../api/postman_collection.json), sedangkan environment hosting siap impor tersedia di [`api/SI-Akademik-Production.postman_environment.json`](../api/SI-Akademik-Production.postman_environment.json). Nilai `base_url` adalah `https://alwiyaa.my.id/Alex/public` (tanpa garis miring di akhir agar URL endpoint tidak menjadi `//api/...`).
 
 1. Di Postman, pilih **Import** dan impor kedua file JSON tersebut.
-2. Pilih environment **SI Akademik Local** dari dropdown environment. Periksa `base_url` dan sesuaikan bila URL instalasi lokal berbeda.
-3. Isi `password` pada environment dengan kata sandi akun uji. Jika username/email pada environment sudah terdaftar, lewati request register; jika belum, jalankan **POST - Register pengguna**.
-4. Jalankan **POST - Login (ambil token)**. Salin nilai `data.token` dari response ke variable `token` di environment, lalu simpan. Token berlaku selama 5 menit.
-5. Jalankan request CRUD. GET mahasiswa tidak membutuhkan token; POST, PUT, dan DELETE memakai token Bearer. Pastikan `nim_uji` adalah NIM 9 digit yang belum terdaftar dan `mahasiswa_id` menunjuk data yang aman untuk diubah/dihapus.
-6. Deskripsi handler dan contoh response sukses/gagal sudah tersedia pada request collection. Untuk menerbitkan dokumentasi, buka menu collection dan pilih **View Documentation**; salin tautan hasil publish untuk lampiran laporan.
+2. Pilih environment **SI Akademik Production**. Isi `username`, `password`, dan `email` sendiri; environment tidak menyimpan kredensial atau token. Jangan membagikan export environment setelah memasukkan rahasia.
+3. Jika akun belum terdaftar, jalankan **POST - Register pengguna**. Registrasi publik membuat role `user`, bukan `admin`; gunakan akun admin yang sudah disiapkan untuk menguji operasi tulis mahasiswa.
+4. Jalankan **POST - Login (ambil token)**. Script test menyimpan `data.token` dan `data.role` ke environment. Token berlaku selama 5 menit.
+5. Untuk operasi mahasiswa, pastikan `nim_uji` berisi NIM 9 digit yang belum terdaftar. Request POST akan menyimpan ID hasil ke `mahasiswa_id`; update dan delete menggunakan ID tersebut.
+6. Folder **API Buku - CRUD (data uji)** berisi request list, create, detail, update, delete, dan 404. Request create/update menggunakan judul uji di environment; create menyimpan `buku_id`. DELETE bersifat permanen, jadi jalankan hanya untuk record uji yang dibuat sendiri.
+7. Collection berisi request terhadap hosting produksi. Hindari mengubah atau menghapus data nyata; gunakan record uji yang aman dan bersihkan hanya record yang Anda buat.
+8. Deskripsi endpoint serta contoh response tersedia pada collection. Untuk menerbitkan dokumentasi, buka menu collection dan pilih **View Documentation**; salin tautan hasil publish untuk lampiran laporan.
 
-Jangan membagikan environment yang berisi password atau token. File environment yang disertakan tidak menyimpan password maupun token; isi hanya pada Postman lokal.
+File environment yang disertakan tidak menyimpan password maupun token; masukkan kredensial hanya di Postman lokal Anda.
